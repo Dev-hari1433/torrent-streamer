@@ -1,0 +1,11 @@
+node_modules/
+.next/
+dist/
+.env
+.env.local
+*.tsbuildinfo
+data/
+test-results/
+.runtime/
+frontend/AGENTS.md
+frontend/CLAUDE.md

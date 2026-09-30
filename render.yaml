@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: lumora-api-hari1433
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build -w backend
+    startCommand: npm run start -w backend
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 24.21.0
+      - key: HOST
+        value: 0.0.0.0
+      - key: FRONTEND_ORIGIN
+        fromService:
+          name: lumora-web-hari1433
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: DATA_DIR
+        value: ./data
+      - key: MAX_ACTIVE_TORRENTS
+        value: "2"
+      - key: MAX_MEDIA_PROCESSES
+        value: "2"
+      - key: MAX_PEER_CONNECTIONS
+        value: "40"
+      - key: MAX_FILE_BYTES
+        value: "1073741824"
+      - key: UPLOAD_LIMIT_BYTES
+        value: "500000"
+
+  - type: web
+    name: lumora-web-hari1433
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build -w frontend
+    startCommand: node scripts/start-render-frontend.mjs
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 24.21.0
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          name: lumora-api-hari1433
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL

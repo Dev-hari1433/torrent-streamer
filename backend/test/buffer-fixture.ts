@@ -1,0 +1,21 @@
+// Manual browser fixture for bounded buffering and outside-buffer seeks.
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { resolve, join } from 'node:path';
+import { once } from 'node:events';
+import WebTorrent from 'webtorrent';
+import { Server } from 'bittorrent-tracker';
+import { config } from '../src/config/env.js';
+const directory = resolve('../test-results/long-fixture'); await mkdir(directory, { recursive: true });
+const file = join(directory, 'Lumora buffer test.mkv');
+await promisify(execFile)(config.FFMPEG_PATH, ['-y', '-hide_banner', '-loglevel', 'error', '-f', 'lavfi', '-i', 'testsrc2=size=640x360:rate=24', '-f', 'lavfi', '-i', 'sine=sample_rate=48000', '-t', '180', '-c:v', 'libx264', '-preset', 'ultrafast', '-g', '48', '-b:v', '6M', '-minrate', '6M', '-maxrate', '6M', '-bufsize', '6M', '-x264-params', 'nal-hrd=cbr:force-cfr=1', '-c:a', 'aac', file]);
+const tracker = new Server({ udp: false, ws: false, http: true, stats: false });
+tracker.listen(0, '127.0.0.1'); await once(tracker, 'listening');
+const address = tracker.http!.address(); if (!address || typeof address === 'string') throw Error('Tracker did not start');
+const client = new WebTorrent({ dht: false, lsd: false, natUpnp: false, natPmp: false, utp: false });
+const torrent = client.seed(file, { announce: [`http://127.0.0.1:${address.port}/announce`], private: true }); await once(torrent, 'seed');
+await writeFile(`${file}.torrent`, torrent.torrentFile);
+await writeFile(join(directory, 'manifest.json'), JSON.stringify({ hash: torrent.infoHash, file, magnet: torrent.magnetURI }));
+console.log(JSON.stringify({ hash: torrent.infoHash, file, magnet: torrent.magnetURI }));
+for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => { client.destroy(); tracker.close(); });

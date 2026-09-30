@@ -1,0 +1,15 @@
+{
+  "name": "lumora",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": ["backend", "frontend"],
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c cyan,magenta \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build -w backend && npm run build -w frontend",
+    "typecheck": "npm run typecheck --workspaces",
+    "test": "npm run test -w backend",
+    "start": "concurrently -k \"npm start -w backend\" \"npm start -w frontend\""
+  },
+  "devDependencies": { "concurrently": "9.2.1", "typescript": "5.9.3" }
+}
