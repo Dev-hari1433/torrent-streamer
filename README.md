@@ -1,6 +1,8 @@
 # Lumora
 
-A local P2P media streaming application: Next.js App Router + TypeScript, Fastify, WebTorrent, FFmpeg, Redis, and optional Supabase Auth/history/bookmarks.
+A P2P media streaming application: Next.js App Router + TypeScript, Fastify, WebTorrent, FFmpeg, Redis, and optional Supabase Auth/history/bookmarks.
+
+**Hosted demo:** [Open Lumora](https://lumora-web-hari1433.onrender.com) · [API health](https://lumora-api-hari1433.onrender.com/api/health). The public Render Free demo has a 1 GiB selected-video limit, an ephemeral download cache, and cold starts. For large files and reliable local playback, run Lumora on your computer. See [Render deployment details](RENDER.md).
 
 ## Run
 
@@ -14,7 +16,7 @@ Copy-Item frontend/.env.example frontend/.env.local
 npm run dev
 ```
 
-Open **http://localhost:3000** or **http://127.0.0.1:3000** in a browser on this computer. Both local origins are accepted by the API and WebSocket server. For a loopback `FRONTEND_ORIGIN`, the allowlist includes `localhost`, `127.0.0.1`, and `[::1]` with the same scheme and port; unrelated origins remain blocked. The API runs at `http://127.0.0.1:4000`, and WebSockets at `ws://127.0.0.1:4000/telemetry`. Keep `Start-Lumora.ps1`'s background services running; the app is not hosted remotely and does not depend on the Codex browser being open.
+Open **http://localhost:3000** or **http://127.0.0.1:3000** in a browser on this computer. Both local origins are accepted by the API and WebSocket server. For a loopback `FRONTEND_ORIGIN`, the allowlist includes `localhost`, `127.0.0.1`, and `[::1]` with the same scheme and port; unrelated origins remain blocked. The local API runs at `http://127.0.0.1:4000`, and WebSockets at `ws://127.0.0.1:4000/telemetry`. Keep `Start-Lumora.ps1`'s background services running; local playback does not depend on the Codex browser being open.
 
 For normal Windows use, build once with `npm run build`, then run `powershell -NoProfile -ExecutionPolicy Bypass -File .\Start-Lumora.ps1`. This starts a hidden local supervisor independent of an interactive terminal, restarts failed services with backoff, and writes logs under `.runtime`. Use `Stop-Lumora.ps1` before rebuilding. Run the start script again after restarting Windows; the launcher does not install an operating-system startup task.
 

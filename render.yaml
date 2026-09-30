@@ -3,6 +3,7 @@ services:
     name: lumora-api-hari1433
     runtime: node
     plan: free
+    region: singapore
     buildCommand: npm ci && npm run build -w backend
     startCommand: npm run start -w backend
     healthCheckPath: /api/health
@@ -21,7 +22,7 @@ services:
       - key: MAX_ACTIVE_TORRENTS
         value: "2"
       - key: MAX_MEDIA_PROCESSES
-        value: "2"
+        value: "1"
       - key: MAX_PEER_CONNECTIONS
         value: "40"
       - key: MAX_FILE_BYTES
@@ -33,6 +34,7 @@ services:
     name: lumora-web-hari1433
     runtime: node
     plan: free
+    region: singapore
     buildCommand: npm ci && npm run build -w frontend
     startCommand: node scripts/start-render-frontend.mjs
     healthCheckPath: /
